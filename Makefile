@@ -160,6 +160,7 @@ RAMSCRGEN    := $(TOOLS_DIR)/ramscrgen/ramscrgen$(EXE)
 FIX          := $(TOOLS_DIR)/gbafix/gbafix$(EXE)
 MAPJSON      := $(TOOLS_DIR)/mapjson/mapjson$(EXE)
 JSONPROC     := $(TOOLS_DIR)/jsonproc/jsonproc$(EXE)
+SCRIPT := tools/poryscript/poryscript$(EXE)
 TRAINERPROC  := $(TOOLS_DIR)/trainerproc/trainerproc$(EXE)
 PATCHELF     := $(TOOLS_DIR)/patchelf/patchelf$(EXE)
 ROMTEST      ?= $(shell { command -v mgba-rom-test || command -v $(TOOLS_DIR)/mgba/mgba-rom-test$(EXE); } 2>/dev/null)
@@ -296,6 +297,7 @@ clean-assets:
 	find sound -iname '*.bin' -exec rm {} +
 	find . \( -iname '*.1bpp' -o -iname '*.4bpp' -o -iname '*.8bpp' -o -iname '*.gbapal' -o -iname '*.lz' -o -iname '*.rl' -o -iname '*.latfont' -o -iname '*.hwjpnfont' -o -iname '*.fwjpnfont' \) -exec rm {} +
 	find $(DATA_ASM_SUBDIR)/maps \( -iname 'connections.inc' -o -iname 'events.inc' -o -iname 'header.inc' \) -exec rm {} +
+	rm -f $(patsubst %.pory,%.inc,$(shell find data/ -type f -name '*.pory'))
 
 tidy: tidymodern tidycheck tidydebug
 
@@ -327,6 +329,8 @@ generated: $(AUTO_GEN_TARGETS)
 %.png: ;
 %.pal: ;
 %.aif: ;
+%.pory: ;
+
 
 %.1bpp:   %.png  ; $(GFX) $< $@
 %.4bpp:   %.png  ; $(GFX) $< $@
@@ -338,7 +342,8 @@ generated: $(AUTO_GEN_TARGETS)
 
 clean-generated:
 	-rm -f $(AUTO_GEN_TARGETS)
-
+	
+data/%.inc: data/%.pory; $(SCRIPT) -i $< -o $@ -fc tools/poryscript/font_config.json -cc tools/poryscript/command_config.json
 COMPETITIVE_PARTY_SYNTAX := $(shell PATH="$(PATH)"; echo 'COMPETITIVE_PARTY_SYNTAX' | $(CPP) $(CPPFLAGS) -imacros include/gba/defines.h -imacros include/config/general.h | tail -n1)
 ifeq ($(COMPETITIVE_PARTY_SYNTAX),1)
 %.h: %.party ; $(CPP) $(CPPFLAGS) -traditional-cpp - < $< | $(TRAINERPROC) -o $@ -i $< -
