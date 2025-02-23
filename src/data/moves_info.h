@@ -20714,6 +20714,27 @@ const struct MoveInfo gMovesInfo[MOVES_COUNT_ALL] =
         }),
         .battleAnimScript = gBattleAnimMove_MalignantChain,
     },
+    [MOVE_BLOW_FISH] =
+    {
+        .name = COMPOUND_STRING("Blow Fish"),
+        .description = COMPOUND_STRING(
+            "A Forceful Blow\n"
+            "that may badly poison."),
+        .effect = EFFECT_HIT,
+        .power = 80,
+        .type = TYPE_WATER,
+        .accuracy = 100,
+        .pp = 5,
+        .target = MOVE_TARGET_SELECTED,
+        .priority = 0,
+        .category = DAMAGE_CATEGORY_SPECIAL,
+        .additionalEffects = ADDITIONAL_EFFECTS({
+            .moveEffect = MOVE_EFFECT_TOXIC,
+            .chance = 80,
+            .sheerForceBoost = SHEER_FORCE_BOOST,
+        }),
+        .battleAnimScript = gBattleAnimMove_MalignantChain,
+    },
 
     // Z-Moves
     [MOVE_BREAKNECK_BLITZ] =
